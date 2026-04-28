@@ -1,7 +1,7 @@
 macro(SDL_DetectCMakePlatform)
   set(SDL_CMAKE_PLATFORM )
   # Get the platform
-  if(WIN32)
+  if(WIN32 OR CYGWIN)
     set(SDL_CMAKE_PLATFORM WINDOWS)
   elseif(UNIX AND NOT APPLE)
     if(CMAKE_SYSTEM_NAME MATCHES ".*Linux")
