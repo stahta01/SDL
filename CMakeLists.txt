@@ -138,7 +138,7 @@ else()
   set(UNIX_SYS OFF)
 endif()
 
-if(UNIX OR APPLE)
+if(APPLE OR UNIX AND NOT CYGWIN)
   set(UNIX_OR_MAC_SYS ON)
 else()
   set(UNIX_OR_MAC_SYS OFF)
