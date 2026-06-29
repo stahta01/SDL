@@ -3637,7 +3637,7 @@ if(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
 endif()
 
 sdl_sources("${SDL3_SOURCE_DIR}/src/process/SDL_process.c")
-if(WINDOWS)
+if(WINDOWS OR MSYS)
   sdl_glob_sources(
     "${SDL3_SOURCE_DIR}/src/process/windows/*.c"
     "${SDL3_SOURCE_DIR}/src/process/windows/*.h"
