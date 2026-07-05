@@ -132,13 +132,13 @@ list(APPEND CMAKE_REQUIRED_LINK_OPTIONS ${SDL_CHECK_REQUIRED_LINK_OPTIONS})
 SDL_DetectCMakePlatform()
 
 # Don't mistake macOS for unix
-if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT RISCOS)
+if(UNIX AND NOT (ANDROID OR APPLE OR RISCOS OR MSYS))
   set(UNIX_SYS ON)
 else()
   set(UNIX_SYS OFF)
 endif()
 
-if(UNIX OR APPLE)
+if(APPLE OR UNIX AND NOT CYGWIN)
   set(UNIX_OR_MAC_SYS ON)
 else()
   set(UNIX_OR_MAC_SYS OFF)
@@ -1161,7 +1161,7 @@ if(SDL_LIBC)
     vsnprintf vsscanf
     wcsnlen wcscmp wcsdup wcslcat wcslcpy wcslen wcsncmp wcsstr wcstol wcstoll wcstoul wcstoull
   )
-  if(WINDOWS OR CYGWIN)
+  if(WINDOWS OR MSYS OR CYGWIN)
     list(APPEND symbols_to_check
       _copysign _fseeki64 _strrev _ui64toa _ultoa _wcsdup
     )
@@ -1691,6 +1691,26 @@ macro(do_WIN_LIKE_steps)
   endif()
 endmacro()
 
+if(CYGWIN)
+  if (SDL_X11)
+    CheckX11()
+  else()
+    set(HAVE_X11 OFF)
+  endif()
+  if (HAVE_X11)
+    set(DYNAPI_NEEDS_DLOPEN 1)
+    CheckDLOPEN()
+    if(HAVE_DLOPEN)
+      set(SDL_LOADSO_DLOPEN 1)
+      sdl_glob_sources(
+        "${SDL3_SOURCE_DIR}/src/loadso/dlopen/*.c"
+        "${SDL3_SOURCE_DIR}/src/loadso/dlopen/*.h"
+      )
+      set(HAVE_SDL_LOADSO TRUE)
+    endif()
+  endif()
+endif()
+
 if(ANDROID)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/android")
 
@@ -2051,7 +2071,9 @@ elseif(EMSCRIPTEN)
   CheckPTHREAD()
   CheckLibUnwind()
 
-elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN))
+elseif((CYGWIN AND HAVE_X11) OR (UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN OR MSYS)))
+
+  do_WIN_LIKE_steps() # for CYGWIN
 
   set(SDL_DISABLE_DLOPEN_NOTES TRUE)
   if(SDL_DLOPEN_NOTES)
@@ -2383,7 +2405,31 @@ elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN))
     endif()
   endif()
 
-  CheckPTHREAD()
+  if(NOT CYGWIN)
+    CheckPTHREAD()
+  endif()
+
+  if(CYGWIN AND NOT HAVE_SDL_THREADS)
+
+    set(SDL_THREAD_GENERIC_COND_SUFFIX 1)
+    set(SDL_THREAD_GENERIC_RWLOCK_SUFFIX 1)
+    set(SDL_THREAD_WINDOWS 1)
+    sdl_sources(
+      "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_syscond.c"
+      "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_syscond_c.h"
+      "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_sysrwlock.c"
+      "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_sysrwlock_c.h"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_syscond_cv.c"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_sysmutex.c"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_sysrwlock_srw.c"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_syssem.c"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_systhread.c"
+      "${SDL3_SOURCE_DIR}/src/thread/windows/SDL_systls.c"
+    )
+
+    set(HAVE_SDL_THREADS TRUE)
+
+  endif()
 
   if(SDL_CLOCK_GETTIME)
     check_library_exists(c clock_gettime "" FOUND_CLOCK_GETTIME_LIBC)
@@ -2412,8 +2458,18 @@ elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN))
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/locale/unix/*.c")
   set(HAVE_SDL_LOCALE TRUE)
 
-  set(SDL_FILESYSTEM_UNIX 1)
-  sdl_glob_sources("${SDL3_SOURCE_DIR}/src/filesystem/unix/*.c")
+  if(CYGWIN)
+    set(SDL_FILESYSTEM_WINDOWS 1)
+    sdl_glob_sources("${SDL3_SOURCE_DIR}/src/filesystem/windows/*.c")
+    set(SDL_FSOPS_WINDOWS 1)
+    set(HAVE_SDL_FSOPS TRUE)
+  else()
+    set(SDL_FILESYSTEM_UNIX 1)
+    sdl_glob_sources("${SDL3_SOURCE_DIR}/src/filesystem/unix/*.c")
+    set(SDL_FSOPS_POSIX 1)
+    sdl_sources("${SDL3_SOURCE_DIR}/src/filesystem/posix/SDL_sysfsops.c")
+    set(HAVE_SDL_FSOPS TRUE)
+  endif()
   set(HAVE_SDL_FILESYSTEM TRUE)
 
   set(SDL_STORAGE_GENERIC 1)
@@ -2426,10 +2482,6 @@ elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN))
     )
   endif()
   set(HAVE_SDL_STORAGE 1)
-
-  set(SDL_FSOPS_POSIX 1)
-  sdl_sources("${SDL3_SOURCE_DIR}/src/filesystem/posix/SDL_sysfsops.c")
-  set(HAVE_SDL_FSOPS TRUE)
 
   set(SDL_TIME_UNIX 1)
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/time/unix/*.c")
@@ -2465,7 +2517,7 @@ elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR CYGWIN))
     set (HAVE_VSNPRINTF 0)
     set (USE_POSIX_SPAWN 1)
   endif()
-elseif(WINDOWS OR CYGWIN)
+elseif(WINDOWS OR MSYS OR (CYGWIN AND NOT HAVE_X11))
   enable_language(CXX)
   check_c_source_compiles("
     #include <windows.h>
@@ -3613,7 +3665,7 @@ if (SDL_DIALOG)
   if(ANDROID)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/android/SDL_androiddialog.c)
     set(HAVE_SDL_DIALOG TRUE)
-  elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
+  elseif(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR MSYS))
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_unixdialog.c)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_portaldialog.c)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_portaldialog.h)
@@ -3623,7 +3675,7 @@ if (SDL_DIALOG)
   elseif(HAIKU)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/haiku/SDL_haikudialog.cc)
     set(HAVE_SDL_DIALOG TRUE)
-  elseif(WINDOWS)
+  elseif(WINDOWS OR MSYS)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/windows/SDL_windowsdialog.c)
     set(HAVE_SDL_DIALOG TRUE)
   elseif(MACOS)
@@ -3631,7 +3683,7 @@ if (SDL_DIALOG)
     set(HAVE_SDL_DIALOG TRUE)
   endif()
 endif()
-if(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
+if(UNIX AND NOT (APPLE OR RISCOS OR HAIKU OR MSYS))
   sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_zenitymessagebox.h)
   sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_zenitymessagebox.c)
 endif()
