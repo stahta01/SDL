@@ -252,8 +252,12 @@ endif()
 
 if(WINDOWS)
     # mingw32 must come before SDL2main to link successfully
-    if(MINGW OR CYGWIN)
+    if(MINGW)
         sdltest_link_librararies(mingw32)
+    elseif(MSYS)
+        sdltest_link_librararies(msys-2.0)
+    elseif(CYGWIN)
+        sdltest_link_librararies(cygwin)
     endif()
 
     # CET support was added in VS 16.7
