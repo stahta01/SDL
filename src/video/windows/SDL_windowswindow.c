@@ -39,6 +39,11 @@
 // Dropfile support
 #include <shellapi.h>
 
+#if defined(__MSYS__) && !defined(INITGUID)
+    #define INITGUID
+    #include <guiddef.h>
+#endif
+
 #if !(defined(SDL_PLATFORM_XBOXONE) || defined(SDL_PLATFORM_XBOXSERIES))
 #include <shobjidl.h>
 #endif
