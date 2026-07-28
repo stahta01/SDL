@@ -26,6 +26,10 @@
 #include <unknwn.h>
 #include <commdlg.h>
 #include <shlobj.h>
+#if defined(__MSYS__) && !defined(INITGUID)
+    #define INITGUID
+    #include <guiddef.h>
+#endif
 #include <shobjidl.h>
 #include "../../thread/SDL_systhread.h"
 
