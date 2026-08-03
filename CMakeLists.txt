@@ -129,7 +129,7 @@ list(APPEND CMAKE_REQUIRED_LINK_OPTIONS ${SDL_CHECK_REQUIRED_LINK_OPTIONS})
 SDL_DetectCMakePlatform()
 
 # Don't mistake macOS for unix
-if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT RISCOS)
+if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT RISCOS AND NOT MSYS)
   set(UNIX_SYS ON)
 else()
   set(UNIX_SYS OFF)
@@ -267,7 +267,7 @@ if(SDL_FRAMEWORK)
   set(SDL_STATIC_AVAILABLE FALSE)
 endif()
 
-if(UNIX AND NOT ANDROID AND NOT RISCOS AND NOT SDL_FRAMEWORK)
+if(UNIX AND NOT ANDROID AND NOT RISCOS AND NOT SDL_FRAMEWORK AND NOT MSYS)
   set(SDL_RPATH_DEFAULT ON)
 else()
   set(SDL_RPATH_DEFAULT OFF)
@@ -3425,7 +3425,7 @@ if (SDL_DIALOG)
   if(ANDROID)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/android/SDL_androiddialog.c)
     set(HAVE_SDL_DIALOG TRUE)
-  elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
+  elseif(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU AND NOT MSYS)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_unixdialog.c)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_portaldialog.c)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_portaldialog.h)
@@ -3435,7 +3435,7 @@ if (SDL_DIALOG)
   elseif(HAIKU)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/haiku/SDL_haikudialog.cc)
     set(HAVE_SDL_DIALOG TRUE)
-  elseif(WINDOWS)
+  elseif(WINDOWS OR MSYS)
     sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/windows/SDL_windowsdialog.c)
     set(HAVE_SDL_DIALOG TRUE)
   elseif(MACOS)
@@ -3443,13 +3443,13 @@ if (SDL_DIALOG)
     set(HAVE_SDL_DIALOG TRUE)
   endif()
 endif()
-if(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU)
+if(UNIX AND NOT APPLE AND NOT RISCOS AND NOT HAIKU AND NOT MSYS)
   sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_zenitymessagebox.h)
   sdl_sources(${SDL3_SOURCE_DIR}/src/dialog/unix/SDL_zenitymessagebox.c)
 endif()
 
 sdl_sources("${SDL3_SOURCE_DIR}/src/process/SDL_process.c")
-if(WINDOWS)
+if(WINDOWS OR MSYS)
   sdl_glob_sources(
     "${SDL3_SOURCE_DIR}/src/process/windows/*.c"
     "${SDL3_SOURCE_DIR}/src/process/windows/*.h"
@@ -3988,13 +3988,13 @@ if(SDL_SHARED)
         RESOURCE "${SDL_FRAMEWORK_RESOURCES}"
       )
     endif()
-  elseif(UNIX AND NOT ANDROID)
+  elseif(UNIX AND NOT (ANDROID OR MSYS))
     set_target_properties(SDL3-shared PROPERTIES
       VERSION "${SDL_SO_VERSION}"
       SOVERSION "${SDL_SO_VERSION_MAJOR}"
     )
   else()
-    if(WINDOWS OR CYGWIN)
+    if(WINDOWS)
       set_target_properties(SDL3-shared PROPERTIES
         PREFIX ""
       )
