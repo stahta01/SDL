@@ -84,7 +84,7 @@
 #  else
 #    define GLAPIENTRY __stdcall
 #  endif
-#elif defined(__CYGWIN__) && defined(USE_OPENGL32) /* use native windows opengl32 */
+#elif defined(__CYGWIN__) && defined(USE_OPENGL32) && !defined(__MSYS__) /* use native windows opengl32 */
 #  define GLAPI extern
 #  define GLAPIENTRY __stdcall
 #elif (defined(__GNUC__) && __GNUC__ >= 4) || (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590))
@@ -100,7 +100,7 @@
  * than "WIN32_LEAN_AND_MEAN" may include windows.h before
  * glut.h or gl.h.
  */
-#if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__)
+#if (defined(_WIN32) || defined(__MSYS__)) && !defined(APIENTRY) && !defined(__CYGWIN__)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif
