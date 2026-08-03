@@ -317,6 +317,15 @@
 #define SDL_PLATFORM_CYGWIN 1
 #endif
 
+#if defined(__MSYS__)
+
+/**
+ * A preprocessor macro that is only defined if compiling for Msys.
+ *
+ */
+#define SDL_PLATFORM_MSYS 1
+#endif
+
 #if (defined(_WIN32) || defined(SDL_PLATFORM_CYGWIN)) && !defined(__NGAGE__)
 
 /**
