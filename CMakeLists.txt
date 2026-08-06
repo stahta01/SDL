@@ -44,6 +44,13 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+if(CYGWIN AND CMAKE_C_COMPILER MATCHES ".*[-]mingw32[-].*")
+  set(MINGW 1)
+  set(WINDOWS 1)
+  set(WIN32 1)
+  set(UNIX 0)
+endif()
+
 include(CheckLibraryExists)
 include(CheckIncludeFile)
 include(CheckIncludeFiles)
