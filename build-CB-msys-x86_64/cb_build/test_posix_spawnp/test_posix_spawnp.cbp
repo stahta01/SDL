@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="test_posix_spawnp" />
+		<Option pch_mode="2" />
+		<Option compiler="msys2_gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/test_posix_spawnp" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../build-CB-msys-x86_64" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="msys2_gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/test_posix_spawnp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="msys2_gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-DSDL_PROCESS_POSIX" />
+			<Add directory="../../../include" />
+			<Add directory="../../../src" />
+			<Add directory="../../include-config-relwithdebinfo/build_config" />
+			<Add directory="../../../src/process" />
+		</Compiler>
+		<Linker>
+			<Add library="libSDL3_test.a" />
+			<Add library="libSDL3.a" />
+			<Add library="iconv" />
+			<Add library="ole32" />
+			<Add library="gdi32" />
+			<Add library="winmm" />
+			<Add directory="../../../build-CB-msys-x86_64" />
+		</Linker>
+		<Unit filename="../../include-config-relwithdebinfo/build_config/SDL_build_config.h" />
+		<Unit filename="SDL_posixprocess.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_process.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
