@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="test_redirection" />
+		<Option pch_mode="2" />
+		<Option compiler="msys2_gcc" />
+		<Build>
+			<Target title="msys_gcc_win">
+				<Option output="bin/Debug/test_redirection" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../build-CB-msys-x86_64" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="msys2_gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DSDL_PLATFORM_MSYS" />
+					<Add option="-DSDL_PLATFORM_CYGWIN" />
+				</Compiler>
+			</Target>
+			<Target title="ucrt64_gcc">
+				<Option output="bin/Release/test_redirection" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../build-CB-msys-x86_64" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-DSDL_PROCESS_WINDOWS" />
+			<Add directory="../../../src" />
+			<Add directory="../../include-config-relwithdebinfo/build_config" />
+			<Add directory="../../../src/io" />
+		</Compiler>
+		<Linker>
+			<Add library="libSDL3_test.a" />
+			<Add library="libSDL3.a" />
+			<Add library="iconv" />
+			<Add library="gdi32" />
+			<Add library="ole32" />
+			<Add library="winmm" />
+			<Add directory="../../../build-CB-msys-x86_64" />
+		</Linker>
+		<Unit filename="SDL_iostream.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_windowsprocess.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

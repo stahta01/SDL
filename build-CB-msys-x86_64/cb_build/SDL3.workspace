@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="LibSDL3.cbp" />
+		<Project filename="testSDL3.cbp">
+			<Depends filename="LibSDL3.cbp" />
+		</Project>
+		<Project filename="test_posix_spawnp/test_posix_spawnp.cbp" />
+		<Project filename="test_WaitForSingleObject/test_WaitForSingleObject.cbp" />
+		<Project filename="test_environment/test_environment.cbp" />
+		<Project filename="test_redirection/test_redirection.cbp" />
+		<Project filename="test_video/test_video.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>
