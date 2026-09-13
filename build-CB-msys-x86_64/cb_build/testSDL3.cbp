@@ -15,8 +15,6 @@
 				<Option type="1" />
 				<Option compiler="msys2_gcc" />
 				<Option parameters="childprocess.exe" />
-				<Option host_application="./testprocess.exe" />
-				<Option run_host_application_in_terminal="0" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
