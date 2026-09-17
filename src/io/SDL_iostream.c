@@ -20,7 +20,7 @@
 */
 #include "SDL_internal.h"
 
-#if defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#if defined(SDL_PLATFORM_WINDOWS) && !((defined(SDL_PLATFORM_CYGWIN) && defined(SDL_VIDEO_DRIVER_X11)))
 #include "../core/windows/SDL_windows.h"
 #else
 #include <unistd.h>
@@ -74,7 +74,7 @@ struct SDL_IOStream
 #include "../core/openharmony/SDL_openharmony.h"
 #endif
 
-#if defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#if defined(SDL_PLATFORM_WINDOWS) && !((defined(SDL_PLATFORM_CYGWIN) && defined(SDL_VIDEO_DRIVER_X11)))
 
 typedef struct IOStreamWindowsData
 {
@@ -688,9 +688,9 @@ SDL_IOStream *SDL_IOFromFD(int fd, bool autoclose)
 
     return iostr;
 }
-#endif // SDL_PLATFORM_WINDOWS && !SDL_PLATFORM_CYGWIN
+#endif // SDL_PLATFORM_WINDOWS && !(SDL_PLATFORM_CYGWIN && SDL_VIDEO_DRIVER_X11)
 
-#if defined(HAVE_STDIO_H) && !(defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN))
+#if defined(HAVE_STDIO_H) && !(defined(SDL_PLATFORM_WINDOWS) && !((defined(SDL_PLATFORM_CYGWIN) && defined(SDL_VIDEO_DRIVER_X11))))
 
 // Functions to read/write stdio file pointers. Not used for windows.
 
@@ -891,7 +891,7 @@ SDL_IOStream *SDL_IOFromFP(FILE *fp, bool autoclose)
 
     return iostr;
 }
-#endif // HAVE_STDIO_H && !SDL_PLATFORM_WINDOWS && !SDL_PLATFORM_CYGWIN
+#endif // HAVE_STDIO_H && !(SDL_PLATFORM_WINDOWS && !(SDL_PLATFORM_CYGWIN && SDL_VIDEO_DRIVER_X11))
 
 // Functions to read/write memory pointers
 
@@ -998,7 +998,7 @@ static bool mem_setioprops(SDL_PropertiesID props, void *userdata)
 // Functions to create SDL_IOStream structures from various data sources
 
 // private platforms might define SKIP_STDIO_DIR_TEST in their build configs, too.
-#if (defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)) || defined(SDL_PLATFORM_EMSCRIPTEN)
+#if (defined(SDL_PLATFORM_WINDOWS) && !((defined(SDL_PLATFORM_CYGWIN) && defined(SDL_VIDEO_DRIVER_X11)))) || defined(SDL_PLATFORM_EMSCRIPTEN)
 #define SKIP_STDIO_DIR_TEST 1
 #endif
 
@@ -1167,7 +1167,7 @@ SDL_IOStream *SDL_IOFromFile(const char *file, const char *mode)
         iostr = SDL_IOFromFP(fp, true);
     }
 
-#elif defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#elif defined(SDL_PLATFORM_WINDOWS) && !((defined(SDL_PLATFORM_CYGWIN) && defined(SDL_VIDEO_DRIVER_X11)))
     HANDLE handle = windows_file_open(file, mode);
     if (handle != INVALID_HANDLE_VALUE) {
         iostr = SDL_IOFromHandle(handle, mode, true);
