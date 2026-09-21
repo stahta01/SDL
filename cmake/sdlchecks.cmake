@@ -828,7 +828,7 @@ macro(CheckOpenVR)
 
     sdl_glob_sources("${SDL3_SOURCE_DIR}/src/video/openvr/*.c")
     set(SDL_VIDEO_DRIVER_OPENVR 1)
-    if(NOT WINDOWS)
+    if(NOT (WINDOWS OR MSYS))
       sdl_link_dependency(egl LIBS EGL)
     endif()
   endif()
