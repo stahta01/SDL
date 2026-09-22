@@ -823,6 +823,7 @@ def spec_to_job(spec: JobSpec, key: str, trackmem_symbol_names: bool, ctest_args
             job.shared_lib = SharedLibType.CYGDLL
             job.static_lib = StaticLibType.A
             job.cmake_arguments.append("-DSDLTEST_GDB=ON")
+            job.cmake_arguments.append("-DSDL_TESTS_TIMEOUT_MULTIPLIER=1")
             job.cygwin_packages.extend([
                 "cmake",
                 "gcc-core",
