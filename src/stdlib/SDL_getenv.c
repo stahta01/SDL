@@ -22,7 +22,7 @@
 
 #include "SDL_getenv_c.h"
 
-#if defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#if defined(SDL_PLATFORM_MSYS) || defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
 #include "../core/windows/SDL_windows.h"
 #endif
 
@@ -30,7 +30,7 @@
 #include "../core/android/SDL_android.h"
 #endif
 
-#if defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#if defined(SDL_PLATFORM_MSYS) || defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
 #define HAVE_WIN32_ENVIRONMENT
 #elif defined(HAVE_GETENV) && \
       (defined(HAVE_SETENV) || defined(HAVE_PUTENV)) && \
@@ -107,7 +107,7 @@ SDL_Environment *SDL_CreateEnvironment(bool populated)
     }
 
     if (populated) {
-#if defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
+#if defined(SDL_PLATFORM_MSYS) || defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN)
         LPWCH strings = GetEnvironmentStringsW();
         if (strings) {
             for (LPWCH string = strings; *string; string += SDL_wcslen(string) + 1) {
@@ -162,7 +162,7 @@ SDL_Environment *SDL_CreateEnvironment(bool populated)
                 SDL_InsertIntoHashTable(env->strings, variable, value, true);
             }
         }
-#endif // SDL_PLATFORM_WINDOWS && !SDL_PLATFORM_CYGWIN
+#endif // SDL_PLATFORM_MSYS || SDL_PLATFORM_WINDOWS && !SDL_PLATFORM_CYGWIN
     }
 
     return env;
