@@ -829,6 +829,8 @@ def spec_to_job(spec: JobSpec, key: str, trackmem_symbol_names: bool, ctest_args
                 job.msys2_packages.append("ninja")
                 job.msys2_packages.append("pkg-config")
                 job.msys2_packages.append("perl")
+                job.msys2_packages.append("gdb")
+                job.cmake_arguments.append("-DSDLTEST_GDB=ON")
                 job.shared_lib = SharedLibType.MSYSDLL
                 job.static_lib = StaticLibType.A
                 if job.ccache:
