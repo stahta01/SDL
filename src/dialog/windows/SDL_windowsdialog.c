@@ -25,6 +25,9 @@
 
 #include <unknwn.h>
 #include <commdlg.h>
+#ifdef __MSYS__
+    #include "initguid.h"   // Needed before shlobj.h and shobjidl.h to prevent SDL linking error
+#endif
 #include <shlobj.h>
 #include <shobjidl.h>
 #include "../../thread/SDL_systhread.h"

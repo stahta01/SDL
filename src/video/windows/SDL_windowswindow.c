@@ -40,6 +40,9 @@
 #include <shellapi.h>
 
 #if !(defined(SDL_PLATFORM_XBOXONE) || defined(SDL_PLATFORM_XBOXSERIES))
+#ifdef __MSYS__
+    #include "initguid.h"   // Needed before shobjidl.h to prevent SDL linking error
+#endif
 #include <shobjidl.h>
 #endif
 
