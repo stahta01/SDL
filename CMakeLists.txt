@@ -1679,7 +1679,7 @@ macro(do_WIN_LIKE_steps)
 endmacro()
 
 if(CYGWIN)
-  if (SDL_X11)
+  if (SDL_X11 AND NOT MSYS)
     CheckX11()
   else()
     set(HAVE_X11 OFF)
