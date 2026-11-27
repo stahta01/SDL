@@ -505,10 +505,15 @@ add_sdl_test_executable(testmanymouse SOURCES testmanymouse.c NAME83 manymous)
 add_sdl_test_executable(testmodal SOURCES testmodal.c NAME83 modal)
 add_sdl_test_executable(testtray NEEDS_RESOURCES TESTUTILS SOURCES testtray.c NAME83 tray)
 
+if(MSYS)
+    set(test_childprocess_bin "test/childprocess")
+else()
+    set(test_childprocess_bin $<TARGET_FILE:childprocess>)
+endif()
 
 add_sdl_test_executable(testprocess
     NONINTERACTIVE THREADS
-    NONINTERACTIVE_ARGS $<TARGET_FILE:childprocess>
+    NONINTERACTIVE_ARGS "${test_childprocess_bin}"
     INSTALLED_ARGS "${CMAKE_INSTALL_FULL_LIBEXECDIR}/installed-tests/SDL3/childprocess${CMAKE_EXECUTABLE_SUFFIX}"
     SOURCES testprocess.c
     NAME83 process

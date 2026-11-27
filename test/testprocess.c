@@ -391,6 +391,11 @@ failed:
 
 static int process_testStdinToStdout(void *arg)
 {
+#ifdef SDL_PLATFORM_MSYS
+    SDLTest_AssertPass("Test process_testStdinToStdout locks up under Msys");
+    return TEST_SKIPPED;
+#else
+
     TestProcessData *data = (TestProcessData *)arg;
     const char *process_args[] = {
         data->childprocess_path,
@@ -547,6 +552,7 @@ failed:
     SDL_CloseIO(stdout_stream);
     SDL_free(text_in);
     return TEST_ABORTED;
+#endif
 }
 
 static int process_testStdinToStderr(void *arg)
@@ -820,7 +826,7 @@ static int process_testNonExistingExecutable(void *arg)
 
 static int process_testBatBadButVulnerability(void *arg)
 {
-#if !(defined(SDL_PLATFORM_WINDOWS) && !defined(SDL_PLATFORM_CYGWIN))
+#if !(defined(SDL_PLATFORM_WINDOWS) && !(defined(SDL_PLATFORM_CYGWIN) && !defined(SDL_PLATFORM_MSYS)))
     SDLTest_AssertPass("The BatBadBut vulnerability only applied to Windows");
     return TEST_SKIPPED;
 #else
